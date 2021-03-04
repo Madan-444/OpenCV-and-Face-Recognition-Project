@@ -1,7 +1,19 @@
 import cv2
+import os
 import numpy as np
+from os import listdir
+from os.path import isfile, join
 
-face_classifier = cv2.CascadeClassifier('C:/Users/Dell/Desktop/Major Projects/haarcascade_frontalface_default.xml')
+# nameOfStudent = input("What is your??")
+idOfStudent = input("What is your student ID??")
+newPath = "C:/Users/Dell/Desktop/image/{}".format(idOfStudent)
+# againNewpath = os.mkdir(newPath)
+os.mkdir(newPath)
+myPath = "C:/Users/Dell/Desktop/image/{}".format(idOfStudent)
+print(myPath)
+
+
+face_classifier = cv2.CascadeClassifier('C:/Users/Dell/Desktop/attendance/Major Projects/haarcascade_frontalface_default.xml')
 
 def face_extractor(img):
 
@@ -26,8 +38,9 @@ while True:
         count+=1
         face = cv2.resize(face_extractor(frame),(200,200))
         face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+        
 
-        file_name_path = 'C:/Users/Dell/Desktop/image/'+str(count)+'lisa.jpg'
+        file_name_path =  'C:/Users/Dell/Desktop/image/008/'+str(count)+'.jpg'
 
         cv2.imwrite(file_name_path,face)
 
@@ -43,3 +56,23 @@ while True:
 cap.release()
 cv2.destroyAllWindows()
 print('Samples Colletion Completed ')
+
+
+data_path = 'C:/Users/Dell/Desktop/image/008'
+onlyfiles = [f for f in listdir(data_path) if isfile(join(data_path,f))]
+
+Training_Data, Labels = [], []
+
+for i, files in enumerate(onlyfiles):
+    image_path = data_path + onlyfiles[i]
+    images = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    Training_Data.append(np.asarray(images, dtype=np.uint8))
+    Labels.append(i)
+
+Labels = np.asarray(Labels, dtype=np.int32)
+
+model = cv2.face.LBPHFaceRecognizer_create()
+
+model.train(np.asarray(Training_Data), np.asarray(Labels))
+
+print("Dataset Model Training Completed ")
