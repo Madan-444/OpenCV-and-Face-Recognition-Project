@@ -3,15 +3,19 @@ import os
 import numpy as np
 from os import listdir
 from os.path import isfile, join
+from datetime import datetime
 
-qtn = input('Are you new User or existing user ?? Yes or No')
+qtn = input('Are you new User ?? Yes or No').upper()
 myName = input("Enter your name")
+idOfStudent = input("What is your student ID??")
 
-if qtn == 'Yes':
+if qtn == 'YES':
 
     face_classifier = cv2.CascadeClassifier(
     'C:/Users/Dell/Desktop/attendance/Major Projects/haarcascade_frontalface_default.xml')
-
+    
+    # newPath = "C:/Users/Dell/Desktop/image/{}".format(idOfStudent)
+ 
 
     def face_extractor(img):
 
@@ -37,7 +41,7 @@ if qtn == 'Yes':
             face = cv2.resize(face_extractor(frame), (200, 200))
             face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
 
-            file_name_path = 'C:/Users/Dell/Desktop/image/008/'+str(count)+'.jpg'
+            file_name_path = 'C:/Users/Dell/Desktop/image/045/'+str(count)+'.jpg'
 
             cv2.imwrite(file_name_path, face)
 
@@ -56,7 +60,7 @@ if qtn == 'Yes':
     print('Samples Colletion Completed ')
 
     
-    data_path = 'C:/Users/Dell/Desktop/image/008/'
+    data_path = 'C:/Users/Dell/Desktop/image/045/'
     onlyfiles = [f for f in listdir(data_path) if isfile(join(data_path,f))]
 
     Training_Data, Labels = [], []
@@ -108,7 +112,7 @@ if qtn == 'Yes':
 
 
             if confidence > 82:
-                cv2.putText(image, {}, (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2).format(name)
+                cv2.putText(image, name, (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 cv2.imshow('Face Cropper', image)
 
             else:
@@ -131,7 +135,7 @@ if qtn == 'Yes':
 
 else:
     print("My name is {}".format(myName))
-    data_path = 'C:/Users/Dell/Desktop/image/006/'
+    data_path = 'C:/Users/Dell/Desktop/image/{}/'.format(idOfStudent)
     onlyfiles = [f for f in listdir(data_path) if isfile(join(data_path,f))]
 
     Training_Data, Labels = [], []
