@@ -4,21 +4,20 @@ import numpy as np
 from os import listdir
 from os.path import isfile, join
 from datetime import datetime
+import csv
 
 qtn = input('Are you new User ?? Yes or No').upper()
 myName = input("Enter your name")
 idOfStudent = input("What is your student ID??")
 
+
 if qtn == 'YES':
 
     face_classifier = cv2.CascadeClassifier(
-    'C:/Users/Dell/Desktop/attendance/Major Projects/haarcascade_frontalface_default.xml')
-    
-    # newPath = "C:/Users/Dell/Desktop/image/{}".format(idOfStudent)
+    'C:/Users/Dell/Desktop/myProject/haarcascade_frontalface_default.xml')
  
 
     def face_extractor(img):
-
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_classifier.detectMultiScale(gray, 1.3, 5)
 
@@ -41,7 +40,7 @@ if qtn == 'YES':
             face = cv2.resize(face_extractor(frame), (200, 200))
             face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
 
-            file_name_path = 'C:/Users/Dell/Desktop/image/045/'+str(count)+'.jpg'
+            file_name_path = 'C:/Users/Dell/Desktop/image/008/'+str(count)+'.jpg'
 
             cv2.imwrite(file_name_path, face)
 
@@ -60,7 +59,7 @@ if qtn == 'YES':
     print('Samples Colletion Completed ')
 
     
-    data_path = 'C:/Users/Dell/Desktop/image/045/'
+    data_path = 'C:/Users/Dell/Desktop/image/008/'
     onlyfiles = [f for f in listdir(data_path) if isfile(join(data_path,f))]
 
     Training_Data, Labels = [], []
@@ -96,6 +95,7 @@ if qtn == 'YES':
         return img,roi
 
     cap = cv2.VideoCapture(0)
+   
     while True:
 
         ret, frame = cap.read()
@@ -112,9 +112,17 @@ if qtn == 'YES':
 
 
             if confidence > 82:
-                cv2.putText(image, name, (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+                cv2.putText(image, myName, (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 cv2.imshow('Face Cropper', image)
 
+                with open('attendance.csv', mode='r+') as attendance_file:
+                    attendance_writer = csv.writer(attendance_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                    myDataList = attendance_file.readlines()
+                    now = datetime.now()
+                    dtString = now.strftime('%H:%M:%S')
+                    attendance_writer.writerow([ myName, dtString, idOfStudent])
+                    cv2.waitKey(0)
+                    break
             else:
                 cv2.putText(image, "Unknown", (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
                 cv2.imshow('Face Cropper', image)
@@ -171,6 +179,7 @@ else:
         return img,roi
 
     cap = cv2.VideoCapture(0)
+    
     while True:
 
         ret, frame = cap.read()
@@ -189,6 +198,14 @@ else:
             if confidence > 82:
                 cv2.putText(image, myName, (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 cv2.imshow('Face Cropper', image)
+                with open('attendance.csv', mode='r+') as attendance_file:
+                    attendance_writer = csv.writer(attendance_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                    myDataList = attendance_file.readlines()
+                    now = datetime.now()
+                    dtString = now.strftime('%H:%M:%S')
+                    attendance_writer.writerow([ myName, dtString, idOfStudent])
+                    cv2.waitKey(0)
+                    break
 
             else:
                 cv2.putText(image, "Unknown", (250, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
@@ -206,4 +223,5 @@ else:
 
     cap.release()
     cv2.destroyAllWindows()
+ 
 
